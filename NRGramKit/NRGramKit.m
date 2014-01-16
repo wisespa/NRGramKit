@@ -238,10 +238,11 @@ static NSString* callback_url;
     [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
      {
          IGUser* user = [IGUser userWithDictionary:dict];
-         if([Id isEqualToString:@"self"])
-         {
-             user.Id = @"self";
-         }
+// By John: should record real unique user id for future access
+//         if([Id isEqualToString:@"self"])
+//         {
+//             user.Id = @"self";
+//         }
          callback(user);
      }];
 }
