@@ -15,6 +15,10 @@
 @property (nonatomic, retain) NSString * low_resolution;
 @property (nonatomic, retain) NSString * standard_resolution;
 @property (nonatomic, retain) NSString * thumbnail;
+
 +(IGImage*)imageWithDictionary:(NSDictionary*)dict;
++(void)setCDNDomain:(NSString*) cdnDomain;
++(void)setNonCDNDomain:(NSString*) nonCDNDomain;
+
 
 @end
