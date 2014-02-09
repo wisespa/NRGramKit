@@ -16,6 +16,7 @@
 #define kAccessTokenKey                                 @"NSGramKit_access_token"
 #define kLoggedInUserKey                                @"NSGramKit_logged_in_user"
 
+#define kConfigFileName                                 @"NRGramKitConfigs"
 static NSString* access_token;
 static NSString* client_id;
 static NSString* client_secret;
@@ -28,14 +29,63 @@ static NSString* callback_url;
 {
     access_token = [[NSUserDefaults standardUserDefaults] objectForKey:kAccessTokenKey];
     
-    NSBundle *bundle = [NSBundle mainBundle];
-    //NSLog(bundle);
-    NSString *path = [bundle pathForResource:@"NRGramKitConfigs" ofType:@"plist"];
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentPath = ([documentPaths count] > 0) ? [documentPaths objectAtIndex:0] : nil;
+	NSString* path = [documentPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", kConfigFileName]];
+    
+    if (!path || ![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        path = [[NSBundle mainBundle] pathForResource:kConfigFileName ofType:@"plist"];
+    }
+
     NSDictionary* configs = [[NSDictionary alloc]initWithContentsOfFile:path];
+    [self updateConfig:configs];
+}
+
++(void)updateConfig:(NSDictionary*)configs
+{
+    BOOL needRelogin = NO;
+    if (callback_url && ![callback_url isEqualToString:configs[@"InstagramClientCallbackURL"]]) {
+        needRelogin = YES;
+    }
+    
+    if (client_id && ![client_id isEqualToString:configs[@"InstagramClientId"]]) {
+        needRelogin = YES;
+    }
+
+    if (client_secret && ![client_secret isEqualToString:configs[@"InstagramClientSecret"]]) {
+        needRelogin = YES;
+    }
+
     callback_url = configs[@"InstagramClientCallbackURL"];
     client_id = configs[@"InstagramClientId"];
     client_secret = configs[@"InstagramClientSecret"];
     
+    if (configs[@"InstagramImageCDNDomain"]) {
+        [IGImage setCDNDomain:configs[@"InstagramImageCDNDomain"]];
+    }
+    
+    if (configs[@"InstagramImageNonCDNDomain"]) {
+        [IGImage setNonCDNDomain:configs[@"InstagramImageNonCDNDomain"]];
+    }
+    
+    if (needRelogin) {
+        [self logout];
+    }
+}
+
++(void)writeConfigsToFile:(NSDictionary*)configs
+{
+    if (!configs) {
+        return;
+    }
+    
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentPath = ([documentPaths count] > 0) ? [documentPaths objectAtIndex:0] : nil;
+	NSString* path = [documentPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", kConfigFileName]];
+    
+    if (path) {
+        [configs writeToFile:path atomically:YES];
+    }
 }
 
 +(void)setAccessToken:(NSString*)accessToken;
@@ -65,6 +115,11 @@ static NSString* callback_url;
      
 }
 
++(void) sendLoginNotification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kInstagramLoggedinNotification
+                                                        object:nil];
+}
 
 +(BOOL) isLoggedIn
 {
@@ -102,6 +157,8 @@ static NSString* callback_url;
              [self setLoggedInUser:user];
              delegate = nil;
              callback(user,nil);
+             
+             [self sendLoginNotification];
          }];
         
     };
@@ -134,6 +191,8 @@ static NSString* callback_url;
 {
     [self setAccessToken:nil];
     [self setLoggedInUser:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kInstagramLogoutNotification
+                                                        object:nil];
 }
 
 +(void)getUrl:(id)url withCallback:(PaginationDictionaryResultBlock)callback

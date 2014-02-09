@@ -18,6 +18,8 @@
 #import "IGPagination.h"
 #import "IGSubscription.h"
 
+#define kInstagramLoggedinNotification @"InstagramLoggedinNotification"
+#define kInstagramLogoutNotification @"InstagramLogoutNotification"
 
 typedef void (^UserResultBlock)(IGUser*);
 typedef void (^MediaResultBlock)(IGMedia*);
@@ -73,8 +75,12 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 
 @interface NRGramKit : NSObject {
 }
+
++(void)updateConfig:(NSDictionary*)configs;
++(void)writeConfigsToFile:(NSDictionary*)configs;
 +(BOOL) isLoggedIn;
 +(IGUser*) loggedInUser;
++(void) sendLoginNotification;
 +(void)loginInWebView:(UIWebView*)webview loginLoadingCallback:(LoginLoadingBlock)loadingCallback finishedCallback:(LoginResultBlock)callback;
 +(void)logout;
 +(void)getUrl:(id)url withCallback:(PaginationDictionaryResultBlock)callback;
