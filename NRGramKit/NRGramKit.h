@@ -76,6 +76,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 @interface NRGramKit : NSObject {
 }
 
++(NSDictionary*)instagramConfigs;
 +(void)updateConfig:(NSDictionary*)configs;
 +(void)writeConfigsToFile:(NSDictionary*)configs;
 +(BOOL) isLoggedIn;

@@ -29,6 +29,12 @@ static NSString* callback_url;
 {
     access_token = [[NSUserDefaults standardUserDefaults] objectForKey:kAccessTokenKey];
     
+    NSDictionary* configs = [self instagramConfigs];
+    [self updateConfig:configs];
+}
+
++(NSDictionary*)instagramConfigs
+{
     NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentPath = ([documentPaths count] > 0) ? [documentPaths objectAtIndex:0] : nil;
 	NSString* path = [documentPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", kConfigFileName]];
@@ -36,9 +42,8 @@ static NSString* callback_url;
     if (!path || ![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         path = [[NSBundle mainBundle] pathForResource:kConfigFileName ofType:@"plist"];
     }
-
-    NSDictionary* configs = [[NSDictionary alloc]initWithContentsOfFile:path];
-    [self updateConfig:configs];
+    
+    return [[NSDictionary alloc]initWithContentsOfFile:path];
 }
 
 +(void)updateConfig:(NSDictionary*)configs
