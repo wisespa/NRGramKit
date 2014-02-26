@@ -311,6 +311,19 @@ static NSString* callback_url;
      }];
 }
 
++(void)checkPublicProfile:(NSString*)userId withCallback: (OperationSuccessBlock)callback{
+    
+    NSString* url = [NSString stringWithFormat:@"%@/%@/%@?client_id=%@",kInstagramApiBaseUrl,@"users",userId,client_id];
+    [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
+     {
+         if(dict) {
+             callback(YES);
+         } else {
+             callback(NO);
+         }
+     }];
+}
+
 +(void)getUserWithName:(NSString*)name withCallback: (UserArrayResultBlock)callback{
     return [self getUserWithName:name limit:20 withCallback:callback];
 }

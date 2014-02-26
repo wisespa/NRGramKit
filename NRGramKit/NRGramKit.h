@@ -91,6 +91,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 +(void)getUserWithId:(NSString*)Id withCallback: (UserResultBlock)callback;
 +(void)getUserWithName:(NSString*)name limit:(int)limit withCallback: (UserArrayResultBlock)callback;
 +(void)getUserWithName:(NSString*)name withCallback: (UserArrayResultBlock)callback;
++(void)checkPublicProfile:(NSString*)userId withCallback: (OperationSuccessBlock)callback;
 
 +(void)getUsersWhoFollowUserWithId:(NSString*)Id count:(int)count withCallback: (UserArrayResultBlock)callback;
 +(void)getUsersFollowingUserWithId:(NSString*)Id count:(int)count withCallback: (UserArrayResultBlock)callback;
