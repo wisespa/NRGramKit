@@ -7,6 +7,7 @@
 //
 
 #import "InstagramLoginDelegate.h"
+#import "NRGramKit.h"
 
 @interface InstagramLoginDelegate (){
     NSString* callbackURL;
@@ -24,10 +25,8 @@
 {
     self = [super init];
     if (self) {
-        NSBundle *bundle = [NSBundle mainBundle];
-        //NSLog(bundle);
-        NSString *path = [bundle pathForResource:@"NRGramKitConfigs" ofType:@"plist"];
-        NSDictionary* configs = [[NSDictionary alloc]initWithContentsOfFile:path];
+        NSDictionary* configs = [NRGramKit instagramConfigs];
+
         NSString* urlString = configs[@"InstagramClientCallbackURL"];
         NSURL* url = [NSURL URLWithString:urlString];
         callbackURL = [url host];
