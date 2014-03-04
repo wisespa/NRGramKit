@@ -46,7 +46,7 @@ static NSString* callback_url;
     return [[NSDictionary alloc]initWithContentsOfFile:path];
 }
 
-+(void)updateConfig:(NSDictionary*)configs
++(BOOL)updateConfig:(NSDictionary*)configs
 {
     BOOL needRelogin = NO;
     if (callback_url && ![callback_url isEqualToString:configs[@"InstagramClientCallbackURL"]]) {
@@ -72,10 +72,8 @@ static NSString* callback_url;
     if (configs[@"InstagramImageNonCDNDomain"]) {
         [IGImage setNonCDNDomain:configs[@"InstagramImageNonCDNDomain"]];
     }
-    
-    if (needRelogin) {
-        [self logout];
-    }
+
+    return needRelogin;
 }
 
 +(void)writeConfigsToFile:(NSDictionary*)configs

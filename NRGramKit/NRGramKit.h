@@ -77,7 +77,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 }
 
 +(NSDictionary*)instagramConfigs;
-+(void)updateConfig:(NSDictionary*)configs;
++(BOOL)updateConfig:(NSDictionary*)configs;
 +(void)writeConfigsToFile:(NSDictionary*)configs;
 +(BOOL) isLoggedIn;
 +(IGUser*) loggedInUser;
