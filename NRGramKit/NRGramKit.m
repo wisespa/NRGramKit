@@ -747,14 +747,17 @@ static NSString* callback_url;
      }];
 }
 
-+(void)postLikeInMediaWithId:(NSString*)mediaId withCallback:(OperationSuccessBlock)callback{
++(void)postLikeInMediaWithId:(NSString*)mediaId withCallback:(OperationCallbackBlock)callback{
     
     NSString* url = [NSString stringWithFormat:@"/v1/%@/%@/%@?access_token=%@",@"media",mediaId,@"likes", access_token];
     [self requestUrl:url verb:@"POST" params:nil withCompleteCallback:^(NSDictionary* pagination,NSDictionary* data,NSDictionary* meta)
      {
          NSString* code= [meta objectForKey:@"code"];
-         if([code intValue]==200) callback(YES);
-         else callback(NO);
+         if([code intValue]==200) {
+             callback(YES, nil);
+         } else {
+             callback(NO, [meta objectForKey:@"error_message"]);
+         }
      }];
 }
 

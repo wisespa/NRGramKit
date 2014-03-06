@@ -38,6 +38,7 @@ typedef void (^SubscriptionArrayResultBlock)(NSArray*);
 typedef void (^LoginResultBlock)(IGUser* user,NSString* error);
 typedef void (^OperationSuccessBlock)(BOOL);
 typedef void (^LoginLoadingBlock)(BOOL);
+typedef void (^OperationCallbackBlock)(BOOL success, NSString* message);
 
 typedef enum {
     IGIncomingRelationshipFollowedBy,
@@ -124,7 +125,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 +(void)removeCommentWithId:(NSString*)commentId inMediaWithId:(NSString*)mediaId withCallback:(OperationSuccessBlock)callback;
 
 +(void)getLikesInMediaWithId:(NSString*)mediaId count:(int)count withCallback:(CommentArrayResultBlock)callback;
-+(void)postLikeInMediaWithId:(NSString*)mediaId withCallback:(OperationSuccessBlock)callback;
++(void)postLikeInMediaWithId:(NSString*)mediaId withCallback:(OperationCallbackBlock)callback;
 +(void)removeLikeInMediaWithId:(NSString*)mediaId withCallback:(OperationSuccessBlock)callback;
 
 

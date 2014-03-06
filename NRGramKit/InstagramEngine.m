@@ -19,7 +19,11 @@ InstagramEngine* _sharedIGEngine;
     if(_sharedIGEngine==nil)
     {
         _sharedIGEngine = [[InstagramEngine alloc] init];
+        
+        // Add 400 as success code because we need info from 400 request of Instagram
+        [AFHTTPRequestOperation addAcceptableStatusCodes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(400, 1)]];
     }
+    
     return _sharedIGEngine;
 }
 
@@ -30,9 +34,6 @@ InstagramEngine* _sharedIGEngine;
                      onCompletion:(InstagramBodyResponseBlock) completionBlock
                           onError:(void (^)( NSError *error)) errorBlock
 {
-    
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BASE_URL,path]];
-    
     AFHTTPClient* client = [[AFHTTPClient alloc]initWithBaseURL:[NSURL URLWithString:BASE_URL]];
     [client setParameterEncoding:AFFormURLParameterEncoding];
     NSMutableURLRequest* request = [client requestWithMethod:verb path:path parameters:body];
