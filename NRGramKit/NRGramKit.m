@@ -243,21 +243,23 @@ static NSString* callback_url;
                  {
                      if(error_type!=nil)
                      {
-                         if([error_type isEqualToString:@"OAuthAccessTokenException"])
-                         {
-                             callback(nil,nil,[body objectForKey:@"meta"]);
-                         }
-                         else if ([error_type isEqualToString:@"APINotAllowedError"]) {
-                             callback(nil,nil,[body objectForKey:@"meta"]);
-                         }
-                         else if ([error_type isEqualToString:@"OAuthParameterException"]) {
-                            callback(nil,nil,[body objectForKey:@"meta"]);
-                         }
-                         else
-                         {
-                             //APINotAllowedError - for not viewable tags :)
-                             //nothing again
-                         }
+                         callback(nil,nil,[body objectForKey:@"meta"]);
+
+//                         if([error_type isEqualToString:@"OAuthAccessTokenException"])
+//                         {
+//                             callback(nil,nil,[body objectForKey:@"meta"]);
+//                         }
+//                         else if ([error_type isEqualToString:@"APINotAllowedError"]) {
+//                             callback(nil,nil,[body objectForKey:@"meta"]);
+//                         }
+//                         else if ([error_type isEqualToString:@"OAuthParameterException"]) {
+//                            callback(nil,nil,[body objectForKey:@"meta"]);
+//                         }
+//                         else
+//                         {
+//                             //APINotAllowedError - for not viewable tags :)
+//                             //nothing again
+//                         }
                      }
                  }
                  if([code intValue]==420)//420 - OAuthRateLimitException - Rate limit exceeded 5000
