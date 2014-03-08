@@ -146,7 +146,7 @@ static NSString* callback_url;
 }
 
 
-+(void)loginInWebView:(UIWebView*)webview loginLoadingCallback:(LoginLoadingBlock)loadingCallback finishedCallback:(LoginResultBlock)callback
++(void)loginInWebView:(UIWebView*)webview scope:(NSString*)scope loginLoadingCallback:(LoginLoadingBlock)loadingCallback finishedCallback:(LoginResultBlock)callback
 {
     InstagramLoginDelegate* loginDelegate = [[InstagramLoginDelegate alloc]init];
     __block id delegate = loginDelegate;
@@ -184,7 +184,10 @@ static NSString* callback_url;
     }
     
     NSString* returnUrl = callback_url;
-    NSString* authUrl = [NSString stringWithFormat:@"https://api.instagram.com/oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=token&display=touch&scope=likes+comments+relationships",client_id,returnUrl];
+    if (!scope) {
+        scope = @"likes+comments+relationships";//default scope is ALL
+    }
+    NSString* authUrl = [NSString stringWithFormat:@"https://api.instagram.com/oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=token&display=touch&scope=%@", client_id, returnUrl, scope];
     [webview loadRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:authUrl] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:30.0]];
 }
 

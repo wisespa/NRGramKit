@@ -83,7 +83,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 +(BOOL) isLoggedIn;
 +(IGUser*) loggedInUser;
 +(void) sendLoginNotification;
-+(void)loginInWebView:(UIWebView*)webview loginLoadingCallback:(LoginLoadingBlock)loadingCallback finishedCallback:(LoginResultBlock)callback;
++(void)loginInWebView:(UIWebView*)webview scope:(NSString*)scope loginLoadingCallback:(LoginLoadingBlock)loadingCallback finishedCallback:(LoginResultBlock)callback;
 +(void)logout;
 +(void)getUrl:(id)url withCallback:(PaginationDictionaryResultBlock)callback;
 +(void)getUrl:(id)url withCompleteCallback:(PaginationDataMetaResultBlock)callback;
