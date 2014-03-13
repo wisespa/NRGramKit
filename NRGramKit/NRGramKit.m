@@ -578,8 +578,11 @@ static NSString* callback_url;
     NSString* url = [NSString stringWithFormat:@"%@/%@/%@?%@=%@",kInstagramApiBaseUrl,@"media",Id,currentParam, currentParamValue];
     [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
      {
-         
-         callback([IGMedia mediaWithDictionary:dict]);
+         if(dict) {
+             callback([IGMedia mediaWithDictionary:dict]);
+         } else {
+             callback(nil);
+         }
      }];
 }
 
