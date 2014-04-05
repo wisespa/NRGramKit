@@ -576,17 +576,17 @@ static NSString* callback_url;
      }];
 }
 
-+(void)getMediaWithId:(NSString*)Id withCallback: (MediaResultBlock)callback {
++(void)getMediaWithId:(NSString*)Id withCallback: (MediaResultWithErrorMsgBlock)callback {
     NSString* currentParam = [self isLoggedIn]?@"access_token":@"client_id";
     NSString* currentParamValue  = [self isLoggedIn]?access_token:client_id;
 
     NSString* url = [NSString stringWithFormat:@"%@/%@/%@?%@=%@",kInstagramApiBaseUrl,@"media",Id,currentParam, currentParamValue];
-    [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
+    [NRGramKit requestUrl:url verb:@"GET" params:nil withCompleteCallback:^(NSDictionary* pagination,NSDictionary* data,NSDictionary* meta)
      {
-         if(dict) {
-             callback([IGMedia mediaWithDictionary:dict]);
+         if(data) {
+             callback([IGMedia mediaWithDictionary:data], nil);
          } else {
-             callback(nil);
+             callback(nil, [meta objectForKey:@"error_message"]);
          }
      }];
 }

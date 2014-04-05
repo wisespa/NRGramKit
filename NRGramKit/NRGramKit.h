@@ -23,6 +23,7 @@
 
 typedef void (^UserResultBlock)(IGUser*);
 typedef void (^MediaResultBlock)(IGMedia*);
+typedef void (^MediaResultWithErrorMsgBlock)(IGMedia*, NSString* message);
 typedef void (^LocationResultBlock)(IGLocation*);
 typedef void (^SubscriptionsResultBlock)(NSArray* subscriptions);
 typedef void (^SubscriptionResultBlock)(IGSubscription* subscription);
@@ -111,7 +112,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 +(void)getMediaRecentInTagWithName:(NSString*)name count:(int)count maxTagId:(NSString*)maxTagId minTagId:(NSString*)minTagId withCallback:(MediaArrayResultBlock)callback;
 +(void)getMediaRecentInGeographyWithId:(NSString*)Id count:(int)count
      withCallback:(MediaArrayResultBlock)callback;
-+(void)getMediaWithId:(NSString*)Id withCallback: (MediaResultBlock)callback;
++(void)getMediaWithId:(NSString*)Id withCallback: (MediaResultWithErrorMsgBlock)callback;
 +(void)getMediaSearchAtLatitude:(double)lat longitude:(double)lng radius:(int)radius count:(int)count earlierThan:(NSDate*)earlierDate laterThen:(NSDate*)laterDate withCallback:  (MediaArrayResultBlock)callback;
 +(void)getMediaPopularCount:(int)count withCallback:(MediaArrayResultBlock)callback;
 
