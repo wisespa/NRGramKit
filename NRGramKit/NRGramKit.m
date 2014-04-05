@@ -33,6 +33,11 @@ static NSString* callback_url;
     [self updateConfig:configs];
 }
 
++(NSString*)getClientId
+{
+    return client_id;
+}
+
 +(NSDictionary*)instagramConfigs
 {
     NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
