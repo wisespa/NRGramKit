@@ -82,6 +82,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 +(BOOL)updateConfig:(NSDictionary*)configs;
 +(void)writeConfigsToFile:(NSDictionary*)configs;
 +(NSString*)getClientId;
++(NSString*)getClientCallbackURL;
 +(BOOL) isLoggedIn;
 +(IGUser*) loggedInUser;
 +(void) sendLoginNotification;

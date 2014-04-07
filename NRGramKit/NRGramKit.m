@@ -17,6 +17,11 @@
 #define kLoggedInUserKey                                @"NSGramKit_logged_in_user"
 
 #define kConfigFileName                                 @"NRGramKitConfigs"
+
+#define kClientIdKey                                    @"NSGramKit_client_id"
+#define kClientSecretKey                                @"NSGramKit_client_secret"
+#define kClientCallbackKey                              @"NSGramKit_callback_url"
+
 static NSString* access_token;
 static NSString* client_id;
 static NSString* client_secret;
@@ -28,14 +33,25 @@ static NSString* callback_url;
 +(void)initialize
 {
     access_token = [[NSUserDefaults standardUserDefaults] objectForKey:kAccessTokenKey];
-    
-    NSDictionary* configs = [self instagramConfigs];
-    [self updateConfig:configs];
+    client_id = [[NSUserDefaults standardUserDefaults] objectForKey:kClientIdKey];
+    client_secret = [[NSUserDefaults standardUserDefaults] objectForKey:kClientSecretKey];
+    callback_url = [[NSUserDefaults standardUserDefaults] objectForKey:kClientCallbackKey];
+
+    if (!client_id || !client_secret || !callback_url) {
+        // client id not set, get from instagram configs
+        NSDictionary* configs = [self instagramConfigs];
+        [self updateConfig:configs];
+    }
 }
 
 +(NSString*)getClientId
 {
     return client_id;
+}
+
++(NSString*)getClientCallbackURL
+{
+    return callback_url;
 }
 
 +(NSDictionary*)instagramConfigs
@@ -54,21 +70,6 @@ static NSString* callback_url;
 +(BOOL)updateConfig:(NSDictionary*)configs
 {
     BOOL needRelogin = NO;
-    if (callback_url && ![callback_url isEqualToString:configs[@"InstagramClientCallbackURL"]]) {
-        needRelogin = YES;
-    }
-    
-    if (client_id && ![client_id isEqualToString:configs[@"InstagramClientId"]]) {
-        needRelogin = YES;
-    }
-
-    if (client_secret && ![client_secret isEqualToString:configs[@"InstagramClientSecret"]]) {
-        needRelogin = YES;
-    }
-
-    callback_url = configs[@"InstagramClientCallbackURL"];
-    client_id = configs[@"InstagramClientId"];
-    client_secret = configs[@"InstagramClientSecret"];
     
     if (configs[@"InstagramImageCDNDomain"]) {
         [IGImage setCDNDomain:configs[@"InstagramImageCDNDomain"]];
@@ -78,7 +79,58 @@ static NSString* callback_url;
         [IGImage setNonCDNDomain:configs[@"InstagramImageNonCDNDomain"]];
     }
 
+    NSArray* clients = configs[@"InstagramClients"];
+    if (!clients || [clients count] == 0) {
+        // version 1.0.0's configuration file, use old format
+        if (callback_url && ![callback_url isEqualToString:configs[@"InstagramClientCallbackURL"]]) {
+            needRelogin = YES;
+        }
+        
+        if (client_id && ![client_id isEqualToString:configs[@"InstagramClientId"]]) {
+            needRelogin = YES;
+        }
+        
+        if (client_secret && ![client_secret isEqualToString:configs[@"InstagramClientSecret"]]) {
+            needRelogin = YES;
+        }
+        
+        callback_url = configs[@"InstagramClientCallbackURL"];
+        client_id = configs[@"InstagramClientId"];
+        client_secret = configs[@"InstagramClientSecret"];
+    } else {
+        // version 1.1.0
+        BOOL clientValid = NO;
+        for (NSDictionary* clientConfig in clients) {
+            if ([client_id isEqualToString:clientConfig[@"InstagramClientId"]] && [client_secret isEqualToString:clientConfig[@"InstagramClientSecret"]] && [callback_url isEqualToString:clientConfig[@"InstagramClientCallbackURL"]]) {
+                clientValid = YES;
+                break;
+            }
+        }
+        
+        if (!clientValid) {
+            // Client need update, choose a random client
+            int random = arc4random() % [clients count];
+            
+            DLog(@"No. %d client is selected", random);
+            client_id = clients[random][@"InstagramClientId"];
+            client_secret = clients[random][@"InstagramClientSecret"];
+            callback_url = clients[random][@"InstagramClientCallbackURL"];
+            
+            needRelogin = YES;
+        }
+    }
+    
+    [self saveClientInfo];
+    
     return needRelogin;
+}
+
++(void)saveClientInfo
+{
+    [[NSUserDefaults standardUserDefaults] setObject:client_id forKey:kClientIdKey];
+    [[NSUserDefaults standardUserDefaults] setObject:client_secret forKey:kClientSecretKey];
+    [[NSUserDefaults standardUserDefaults] setObject:callback_url forKey:kClientCallbackKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 +(void)writeConfigsToFile:(NSDictionary*)configs

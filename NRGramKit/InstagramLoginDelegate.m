@@ -25,9 +25,8 @@
 {
     self = [super init];
     if (self) {
-        NSDictionary* configs = [NRGramKit instagramConfigs];
 
-        NSString* urlString = configs[@"InstagramClientCallbackURL"];
+        NSString* urlString = [NRGramKit getClientCallbackURL];
         NSURL* url = [NSURL URLWithString:urlString];
         callbackURL = [url host];
     }
