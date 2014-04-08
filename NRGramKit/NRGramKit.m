@@ -78,10 +78,12 @@ static NSString* callback_url;
     if (configs[@"InstagramImageNonCDNDomain"]) {
         [IGImage setNonCDNDomain:configs[@"InstagramImageNonCDNDomain"]];
     }
+   
+    BOOL forceUseDefaultInstagramClient = [configs[@"ForceUsingDefaultInstagramClient"] boolValue];
 
     NSArray* clients = configs[@"InstagramClients"];
-    if (!clients || [clients count] == 0) {
-        // version 1.0.0's configuration file, use old format
+    if (forceUseDefaultInstagramClient || !clients || [clients count] == 0) {
+        // version 1.1.0 when ForceUsingDefaultInstagramClient is enabled, or version 1.0.0's configuration file, use old format
         if (callback_url && ![callback_url isEqualToString:configs[@"InstagramClientCallbackURL"]]) {
             needRelogin = YES;
         }
@@ -372,16 +374,27 @@ static NSString* callback_url;
 }
 
 +(void)checkPublicProfile:(NSString*)userId withCallback: (OperationSuccessBlock)callback{
-    
-    NSString* url = [NSString stringWithFormat:@"%@/%@/%@?client_id=%@",kInstagramApiBaseUrl,@"users",userId,client_id];
-    [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
-     {
-         if(dict) {
-             callback(YES);
-         } else {
-             callback(NO);
-         }
-     }];
+    if ([self isLoggedIn]) {
+        NSString* url = [NSString stringWithFormat:@"%@/%@/%@/relationship?access_token=%@",kInstagramApiBaseUrl,@"users",userId,access_token];
+        [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
+         {
+             if(dict && [dict[@"target_user_is_private"] integerValue] == 0) {
+                 callback(YES);
+             } else {
+                 callback(NO);
+             }
+         }];
+    } else {
+        NSString* url = [NSString stringWithFormat:@"%@/%@/%@?client_id=%@",kInstagramApiBaseUrl,@"users",userId,client_id];
+        [NRGramKit getUrl:url withCallback:^(IGPagination* pagination,NSDictionary* dict)
+         {
+             if(dict) {
+                 callback(YES);
+             } else {
+                 callback(NO);
+             }
+         }];
+    }
 }
 
 +(void)getUserWithName:(NSString*)name withCallback: (UserArrayResultBlock)callback{
