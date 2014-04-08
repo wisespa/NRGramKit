@@ -40,7 +40,7 @@ static NSString* callback_url;
     if (!client_id || !client_secret || !callback_url) {
         // client id not set, get from instagram configs
         NSDictionary* configs = [self instagramConfigs];
-        [self updateConfig:configs];
+        [self updateConfig:configs forceUpdateClientId:NO];
     }
 }
 
@@ -67,8 +67,15 @@ static NSString* callback_url;
     return [[NSDictionary alloc]initWithContentsOfFile:path];
 }
 
-+(BOOL)updateConfig:(NSDictionary*)configs
++(BOOL)updateConfig:(NSDictionary*)configs forceUpdateClientId:(BOOL)forceUpdateClientId
 {
+    if (forceUpdateClientId) {
+        // Force client update: make all client info empty
+        client_id = nil;
+        client_secret = nil;
+        callback_url = nil;
+    }
+    
     BOOL needRelogin = NO;
     
     if (configs[@"InstagramImageCDNDomain"]) {
@@ -123,6 +130,8 @@ static NSString* callback_url;
     }
     
     [self saveClientInfo];
+    
+    DLog("NRGram configs updated");
     
     return needRelogin;
 }
@@ -254,6 +263,10 @@ static NSString* callback_url;
 
 +(void)logout
 {
+    if (![NRGramKit isLoggedIn]) {
+        return;
+    }
+    
     [self setAccessToken:nil];
     [self setLoggedInUser:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:kInstagramLogoutNotification

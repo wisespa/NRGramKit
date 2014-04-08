@@ -79,7 +79,7 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 }
 
 +(NSDictionary*)instagramConfigs;
-+(BOOL)updateConfig:(NSDictionary*)configs;
++(BOOL)updateConfig:(NSDictionary*)configs forceUpdateClientId:(BOOL)forceUpdateClientId;
 +(void)writeConfigsToFile:(NSDictionary*)configs;
 +(NSString*)getClientId;
 +(NSString*)getClientCallbackURL;
