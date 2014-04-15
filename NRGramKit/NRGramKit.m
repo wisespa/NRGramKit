@@ -664,7 +664,8 @@ static NSString* callback_url;
          if(data) {
              callback([IGMedia mediaWithDictionary:data], nil);
          } else {
-             callback(nil, [meta objectForKey:@"error_message"]);
+             NSString* errorMessage = [NSString stringWithFormat:@"message:%@, type:%@, code:%@", [meta objectForKey:@"error_message"], [meta objectForKey:@"error_type"], [meta objectForKey:@"code"]];
+             callback(nil, errorMessage);
          }
      }];
 }
@@ -847,7 +848,8 @@ static NSString* callback_url;
          if([code intValue]==200) {
              callback(YES, nil);
          } else {
-             callback(NO, [meta objectForKey:@"error_message"]);
+             NSString* errorMessage = [NSString stringWithFormat:@"message:%@, type:%@, code:%@", [meta objectForKey:@"error_message"], [meta objectForKey:@"error_type"], [meta objectForKey:@"code"]];
+             callback(NO, errorMessage);
          }
      }];
 }
