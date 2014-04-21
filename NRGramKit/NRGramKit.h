@@ -92,6 +92,8 @@ typedef void(^RelationshipResultBlock)(IGIncomingRelationshipStatus,IGOutgoingRe
 +(void)getUrl:(id)url withCompleteCallback:(PaginationDataMetaResultBlock)callback;
 +(void)setAccessToken:(NSString*)accessToken;
 
++(void)checkValidAccessToken:(OperationCallbackBlock)callback;
+
 +(void)getUserWithId:(NSString*)Id withCallback: (UserResultBlock)callback;
 +(void)getUserWithName:(NSString*)name limit:(int)limit withCallback: (UserArrayResultBlock)callback;
 +(void)getUserWithName:(NSString*)name withCallback: (UserArrayResultBlock)callback;

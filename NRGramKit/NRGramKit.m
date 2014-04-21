@@ -370,6 +370,35 @@ static NSString* callback_url;
 }
 
 #pragma mark - User -
++(void)checkValidAccessToken:(OperationCallbackBlock)callback
+{
+    if (![NRGramKit isLoggedIn]) {
+        if (callback) {
+            callback(NO, @"User not log in when checking access token");
+        }
+        
+        return;
+    }
+    
+    NSString* url = [NSString stringWithFormat:@"%@/%@/%@?access_token=%@",kInstagramApiBaseUrl,@"users",[self loggedInUser].Id,access_token];
+
+    [self requestUrl:url verb:@"GET" params:nil withCompleteCallback:^(NSDictionary* pagination,NSDictionary* data,NSDictionary* meta)
+     {
+         NSString* code= [meta objectForKey:@"code"];
+         if([code intValue]==200) {
+             callback(YES, nil);
+         } else {
+             
+             if ([meta objectForKey:@"error_message"] && [[meta objectForKey:@"error_message"] rangeOfString:@"The access_token provided is invalid"].location != NSNotFound) {
+                 
+                 callback(NO, nil); // access token invalid, no error message should report
+             } else {
+                 NSString* errorMessage = [NSString stringWithFormat:@"message:%@, type:%@, code:%@", [meta objectForKey:@"error_message"], [meta objectForKey:@"error_type"], [meta objectForKey:@"code"]];
+                 callback(NO, errorMessage);
+             }
+         }
+     }];
+}
 
 +(void)getUserWithId:(NSString*)Id withCallback: (UserResultBlock)callback{
     
